@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import User from './User';
 import { useRef } from 'react';
 import CreateUser from './CreateUser';
@@ -7,6 +7,8 @@ import { useState } from 'react';
 const UserList = () => {
 
     const nextId = useRef(6);
+
+    // const [count , setCount] = useState(0);
 
     const [ users, setUsers] = useState([
 
@@ -81,6 +83,7 @@ const UserList = () => {
 
         setUsers(users.concat(user)); 
 
+
         // 기존 inputs 창 초기화
 
         setInputs({
@@ -96,12 +99,24 @@ const UserList = () => {
         // filter는 조건에 맞는 값만 배열로 리턴
         // user.id가 일치하지 않는 원소만 추출하여 새로운 배열로 리턴
         setUsers(users.filter(user => user.id !== id))
+
     }
 
     const onToggle = (id) => {
         // user.id 가 파라미터 id와 일치하면 active의 상태를 반전시켜 줌.
         setUsers(users.map(user =>  user.id === id ? { ...user, active : !user.active }  : user ))
+
     }
+
+    const countActiveUser = (users) => {
+        // user.active 가 true 인 사용자를 카운트해서 리턴
+        return (users.filter(user => user.active).length);
+    }
+
+    const count = useMemo(() => countActiveUser(users), [users])
+    
+
+
 
     return (
         <div className='userList'>
@@ -113,6 +128,9 @@ const UserList = () => {
                     <User user = {u} key = {u.id} onRemove={onRemove} onToggle={onToggle}/>
                 ))
             }
+
+
+            <div>완료 사용자 수 : {count}</div>
             
        
         </div>
